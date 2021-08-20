@@ -29,11 +29,7 @@ case "$EXTENSION" in
         echo "MKV file detected. Checking for H265/x265 encoding..."
         EXTENSION="$(echo "${CONVERTED_FILE##*.}" | tr '[:upper:]' '[:lower:]')"
         if [ "$EXTENSION" = "mkv" ]; then
-            LOWER_SOURCE_FILE="$(echo "${SOURCE_FILE##*/}" | tr '[:upper:]' '[:lower:]')"
-            echo "Lower filename for encoding comparison: $LOWER_SOURCE_FILE"
-            ENCODING=0
-            RET="$(mediainfo "$LOWER_SOURCE_FILE" | grep -oh -m 1 "HEVC")"
-            if [ -n "$RET" ]; then
+            if [ $(echo mediainfo "${SOURCE_FILE##*/}" | grep -oh -m 1 "HEVC") ]; then
                 echo "HEVC encoding detected!"
                 echo "File conversion not required, moving file..."
                 mkdir -p "$(dirname "$CONVERTED_FILE")"
