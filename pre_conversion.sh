@@ -21,15 +21,16 @@ echo "pre-conversion: Source File = $SOURCE_FILE"
 echo "pre-conversion: Preset = $PRESET"
 
 EXTENSION="$(echo "${SOURCE_FILE##*.}" | tr '[:upper:]' '[:lower:]')"
+CODEC="$(mediainfo "${SOURCE_FILE}" | grep -oh -m 1 'HEVC')"
 
 # Using 'case' to prepare script in for multiple extensions workflow
 case "$EXTENSION" in
     mkv)
         # Check for MKVs
         echo "MKV file detected. Checking for H265/x265 encoding..."
-        EXTENSION="$(echo "${CONVERTED_FILE##*.}" | tr '[:upper:]' '[:lower:]')"
         if [ "$EXTENSION" = "mkv" ]; then
-            if [ $(echo mediainfo "${SOURCE_FILE##*/}" | grep -oh -m 1 "HEVC") ]; then
+		echo "The following codec is found: $CODEC"
+            if [ "$CODEC" = "HEVC" ]; then
                 echo "HEVC encoding detected!"
                 echo "File conversion not required, moving file..."
                 mkdir -p "$(dirname "$CONVERTED_FILE")"
